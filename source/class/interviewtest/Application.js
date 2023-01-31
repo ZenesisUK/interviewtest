@@ -20,7 +20,10 @@ qx.Class.define("interviewtest.Application", {
     // @type{interviewtest.db.Db} the database
     __db: null,
 
-    main: function () {
+    /**
+     * @Override
+     */
+    main() {
       super();
 
       // Initialise logging
@@ -33,17 +36,8 @@ qx.Class.define("interviewtest.Application", {
       let db = (this.__db = new interviewtest.db.Db());
       db.load();
 
-      function dumpDatabase() {
-        console.log("Database contains:");
-        db.getPeople().forEach(person => {
-          console.log(
-            `Person: ${person.getName()} (${person.getEmail()}) - ${person.toUuid()}`
-          );
-        });
-      }
-
       // Show what we've loaded
-      dumpDatabase();
+      this.dumpDatabase();
 
       // Setup the layout of the page
       let doc = this.getRoot();
@@ -51,8 +45,36 @@ qx.Class.define("interviewtest.Application", {
       doc.add(root, { left: 0, top: 0, right: 0, bottom: 0 });
 
       // Create a toolbar
+      root.add(this.__createToolbar());
+
+      // Now the main meetings editor
+      let ed = new interviewtest.editors.MeetingsEditor();
+      ed.set({
+        db: db,
+        value: db.getMeetings()
+      });
+      root.add(ed);
+    },
+
+    /**
+     * Dumps the database to the console for debugging
+     */
+    dumpDatabase() {
+      console.log("Database contains:");
+      this.__db.getPeople().forEach(person => {
+        console.log(
+          `Person: ${person.getName()} (${person.getEmail()}) - ${person.toUuid()}`
+        );
+      });
+    },
+
+    /**
+     * Creates the toolbar
+     * @returns {qx.ui.toolbar.ToolBar}
+     */
+    __createToolbar() {
+      let db = this.__db;
       let tb = new qx.ui.toolbar.ToolBar();
-      root.add(tb);
 
       // Simple test of the database - add a person and save
       let btnTest = new qx.ui.toolbar.Button(
@@ -67,7 +89,7 @@ qx.Class.define("interviewtest.Application", {
         });
         people.push(person);
         db.save();
-        dumpDatabase();
+        this.dumpDatabase();
       });
       tb.add(btnTest);
 
@@ -79,9 +101,11 @@ qx.Class.define("interviewtest.Application", {
       btnResetDb.addListener("click", () => {
         db.reset();
         db.save();
-        dumpDatabase();
+        this.dumpDatabase();
       });
       tb.add(btnResetDb);
+
+      return tb;
     }
   }
 });

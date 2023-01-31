@@ -6,21 +6,25 @@ qx.Class.define("interviewtest.db.Db", {
 
   construct() {
     super();
-    this.__people = [];
-    this.__rooms = [];
+    this.__people = new qx.data.Array();
+    this.__rooms = new qx.data.Array();
+    this.__meetings = new qx.data.Array();
   },
 
   members: {
-    // @type {interviewtest.db.Person[]} people in the database
+    // @type {qx.data.Array<interviewtest.db.Person>} people in the database
     __people: null,
 
-    // @type {interviewtest.db.Room[]} rooms in the database
+    // @type {qx.data.Array<interviewtest.db.Room>} rooms in the database
     __rooms: null,
+
+    // @type {qx.data.Array<interviewtest.db.Meeting>} booked meetings in the database
+    __meetings: null,
 
     /**
      * Returns the people; you can manipulate this array directly, and then use `save` to persist your changes
      *
-     * @returns {interviewtest.db.Person[]}
+     * @returns {qx.data.Array<interviewtest.db.Person>}
      */
     getPeople() {
       return this.__people;
@@ -29,10 +33,19 @@ qx.Class.define("interviewtest.db.Db", {
     /**
      * Returns the rooms; you can manipulate this array directly, and then use `save` to persist your changes
      *
-     * @returns {interviewtest.db.Room[]}
+     * @returns {qx.data.Array<interviewtest.db.Room>}
      */
     getRooms() {
       return this.__rooms;
+    },
+
+    /**
+     * Returns the rooms; you can manipulate this array directly, and then use `save` to persist your changes
+     *
+     * @returns {qx.data.Array<interviewtest.db.Meeting>}
+     */
+    getMeetings() {
+      return this.__meetings;
     },
 
     /**
@@ -76,18 +89,30 @@ qx.Class.define("interviewtest.db.Db", {
      * @param {Object} data the raw JSON
      */
     loadFromJson(data) {
-      this.__people = [];
-      data.people.forEach(data => {
-        let person = new interviewtest.db.Person();
-        person.loadFromJson(data);
-        this.__people.push(person);
-      });
-      this.__rooms = [];
-      data.rooms.forEach(data => {
-        let room = new interviewtest.db.Room();
-        room.loadFromJson(data);
-        this.__rooms.push(room);
-      });
+      this.__people.removeAll();
+      if (data.people) {
+        data.people.forEach(data => {
+          let person = new interviewtest.db.Person();
+          person.loadFromJson(data);
+          this.__people.push(person);
+        });
+      }
+      this.__rooms.removeAll();
+      if (data.rooms) {
+        data.rooms.forEach(data => {
+          let room = new interviewtest.db.Room();
+          room.loadFromJson(data);
+          this.__rooms.push(room);
+        });
+      }
+      this.__meetings.removeAll();
+      if (data.meetings) {
+        data.meetings.forEach(data => {
+          let meeting = new interviewtest.db.Meeting();
+          meeting.loadFromJson(data);
+          this.__meetings.push(meeting);
+        });
+      }
     },
 
     /**
@@ -97,8 +122,9 @@ qx.Class.define("interviewtest.db.Db", {
      */
     saveToJson() {
       return {
-        people: this.__people.map(person => person.saveToJson()),
-        rooms: this.__rooms.map(room => room.saveToJson())
+        people: this.__people.map(person => person.saveToJson()).toArray(),
+        rooms: this.__rooms.map(room => room.saveToJson()).toArray(),
+        meetings: this.__meetings.map(meeting => meeting.saveToJson()).toArray()
       };
     }
   },
@@ -140,6 +166,16 @@ qx.Class.define("interviewtest.db.Db", {
         {
           name: "Huddle Meeting Room",
           maxPeople: 2
+        }
+      ],
+      meetings: [
+        {
+          roomName: "Board Room",
+          people: ["John Lennon", "Paul McCartney"]
+        },
+        {
+          roomName: "Huddle Meeting Room",
+          people: ["George Harrison", "Ringo Starr"]
         }
       ]
     }
