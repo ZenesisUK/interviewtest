@@ -3,11 +3,13 @@ qx.Class.define("interviewtest.db.Room", {
 
   properties: {
     name: {
-      check: "String"
+      check: "String",
+      event: "changeName"
     },
     maxPeople: {
       init: 100,
-      check: "Integer"
+      check: "Integer",
+      event: "changeMaxPeople"
     }
   },
 

@@ -3,10 +3,12 @@ qx.Class.define("interviewtest.db.Person", {
 
   properties: {
     name: {
-      check: "String"
+      check: "String",
+      event: "changeName"
     },
     email: {
-      check: "String"
+      check: "String",
+      event: "changeEmail"
     }
   },
 

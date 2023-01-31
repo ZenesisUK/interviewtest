@@ -105,6 +105,14 @@ qx.Class.define("interviewtest.Application", {
       });
       tb.add(btnResetDb);
 
+      // Reset the database
+      let btnSaveDb = new qx.ui.toolbar.Button("Save Database");
+      btnSaveDb.addListener("click", () => {
+        db.save();
+        this.dumpDatabase();
+      });
+      tb.add(btnSaveDb);
+
       return tb;
     }
   }

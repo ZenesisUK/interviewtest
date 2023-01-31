@@ -19,7 +19,7 @@ qx.Class.define("interviewtest.editors.MeetingEditor", {
     this._add(cbo, { row: 0, column: 1 });
 
     // This list controller will make sure that the drop down list is always up to date
-    let ctlr = new qx.data.controller.List(null, cbo, "roomName");
+    let ctlr = new qx.data.controller.List(null, cbo, "name");
     this.bind("db.rooms", ctlr, "model");
 
     valueController.addTarget(cbo, "value", "roomName", true);

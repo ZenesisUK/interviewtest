@@ -11,6 +11,12 @@ qx.Class.define("interviewtest.db.Db", {
     this.__meetings = new qx.data.Array();
   },
 
+  events: {
+    changePeople: "qx.event.type.Data",
+    changeRooms: "qx.event.type.Data",
+    changeMeetings: "qx.event.type.Data"
+  },
+
   members: {
     // @type {qx.data.Array<interviewtest.db.Person>} people in the database
     __people: null,
