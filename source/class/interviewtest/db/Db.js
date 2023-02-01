@@ -115,7 +115,7 @@ qx.Class.define("interviewtest.db.Db", {
       if (data.meetings) {
         data.meetings.forEach(data => {
           let meeting = new interviewtest.db.Meeting();
-          meeting.loadFromJson(data);
+          meeting.loadFromJson(data, this);
           this.__meetings.push(meeting);
         });
       }

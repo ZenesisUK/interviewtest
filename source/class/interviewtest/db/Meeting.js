@@ -11,6 +11,7 @@ qx.Class.define("interviewtest.db.Meeting", {
       check: "String",
       event: "changeRoomName"
     },
+    /** @type{qx.data.Array<interviewtest.Person>} */
     people: {
       check: "qx.data.Array",
       event: "changePeople"
@@ -23,12 +24,19 @@ qx.Class.define("interviewtest.db.Meeting", {
   },
 
   members: {
-    loadFromJson(data) {
+    loadFromJson(data, db) {
       this.set({
         roomName: data.roomName
       });
-      this.getPeople().removeAll();
-      this.getPeople().append(data.people);
+      let people = this.getPeople();
+      people.removeAll();
+      data.people.forEach(data => {
+        let person = db
+          .getPeople()
+          .find(person => person.getName() == data.person);
+        if (person) people.append(person);
+      });
+      people.append(data.people);
     },
 
     saveToJson() {
